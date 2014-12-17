@@ -51,7 +51,7 @@ model <- lm(Emissions ~ Year, plot.data)
 with(plot.data, plot(Year, Emissions,  col = "steelblue4", type = "b", lwd = 3,
 	ylim = c(0,800000), ylab = expression("Total Emissions  " * PM[25]),
 	xaxp = c(1998,2009,11), xlab = "Year", 
-    main = "Total Emissions by Year for Coal Combustion-Related Sources"))
+    main = "Total Emissions by Year for Coal Combustion-Related Sources", cex.main = 0.8))
 with(plot.data, abline(model, lwd = 3, col = "gold2"))
 
 ## Plot to the PNG device to create a file.

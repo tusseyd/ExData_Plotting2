@@ -76,7 +76,7 @@ print(co.plot)
 
 ## Plot to the PNG device to create a file.
 print("Copying plot to the PNG file.")
-ggsave(filename="Project2-Plot6.png")
+ggsave(filename="Project2-Plot6.png", dpi = 72)
 
 ##  Record program end time
 end.time <- Sys.time()
