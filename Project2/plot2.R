@@ -2,9 +2,10 @@
 ## Exploratory Data Analysis
 ## Project 2, Plot 2 
 
-##  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
-##  Using the base plotting system, make a plot showing the total PM2.5 emission
-##  from all sources for each of the years 1999, 2002, 2005, and 2008
+##  Have total emissions from PM2.5 decreased in the 
+##  Baltimore City, Maryland (fips == "24510") from 1999 to 2008? 
+
+##  Use the base plotting system to make a plot answering this question.
 
 ##  Record program start time
 start.time <- Sys.time()
@@ -20,17 +21,18 @@ if(!file.exists("summarySCC_PM25.rds") | !file.exists("Source_Classification_Cod
 	unzip("SCCrawdata.zip")
 }
 
-
 # Read in the data.
 print( "Reading data file." )
 if (!exists("NEI")) NEI <- readRDS("./summarySCC_PM25.rds")
 if (!exists("SCC")) SCC <- readRDS("./Source_Classification_Code.rds")
 
-## Determine the total polution by year
+## Determine the total polution by year for the Baltimore fips
 baltimore.city <- subset(NEI, fips == "24510")
 all.years <- unique(baltimore.city$year)
 plot.data <- data.frame()
+total <- 0
 
+##  Build the plot.data dataframe for ease in plotting.
 for (yr in all.years) {
 	total <- sum(baltimore.city$Emissions[baltimore.city$year == yr])
 	plot.data <- rbind(plot.data, data.frame(yr, total))
@@ -51,7 +53,7 @@ with(plot.data, abline(model, lwd = 3, col = "gold2"))
 
 ## Plot to the PNG device to create a file.
 print("Copying plot to the PNG file.")
-dev.copy(png, file = "Project2-Plot2.png", width=480, height=480)
+dev.copy(png, file = "plot2.png", width=480, height=480)
 dev.off()
 
 ##  Record program end time

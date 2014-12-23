@@ -2,9 +2,13 @@
 ## Exploratory Data Analysis
 ## Project 2, Plot 3 
 
-##  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
-##  Using the base plotting system, make a plot showing the total PM2.5 emission
-##  from all sources for each of the years 1999, 2002, 2005, and 2008
+##  Of the four types of sources indicated by the 
+##  type (point, nonpoint, onroad, nonroad) variable, 
+##  which of these four sources have seen decreases in 
+##  emissions from 1999-2008 for Baltimore City? 
+##  Which have seen increases in emissions from 1999-2008? 
+
+##  Use the ggplot2 plotting system to make a plot answer this question.
 
 ##  Record program start time
 start.time <- Sys.time()
@@ -36,28 +40,33 @@ if (!exists("baltimore.city")) baltimore.city <- subset(NEI, fips == "24510")
 
 all.years <- unique(baltimore.city$year)
 all.types <- unique(baltimore.city$type)
-plot.data <- data.frame(Year = integer(), Type = character(), Emissions = numeric())
 
+##  Build the plot.data dataframe for ease in plotting.
+plot.data <- data.frame(Year = integer(), Type = character(), Emissions = numeric())
 for (yr in all.years){
 	for (type in all.types){
-		total <- sum(baltimore.city$Emissions[baltimore.city$year == yr & baltimore.city$type == type])
+		total <- sum(baltimore.city$Emissions[baltimore.city$year == yr & 
+                        baltimore.city$type == type])
     plot.data <- rbind(plot.data, data.frame(Year = yr, Type = type, Emissions = total))
 	}
 }
 
-co.plot <- ggplot(plot.data, aes(Year, Emissions)) + 
-    geom_point(colour = "black", shape = 21, size = 4, fill="black") +
-    geom_line( colour = "steelblue", size = 1.2) + 
+co.plot <- ggplot(plot.data, aes(Year, Emissions, color = Type)) + 
+    geom_point(shape = 21, size = 6, col="black", bg = "white") +
+    geom_line(size = 1.2) + 
 	facet_grid(. ~ Type) + 
-    geom_smooth(method = "lm", se = FALSE, colour="gold2", size = 1.5, linetype = "dashed" ) + 
-	theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
+    geom_smooth(method = "lm", se = FALSE, colour="black", size = 1.5, linetype = "dotted" ) + 
+	theme(axis.text.x = element_text(angle = 75, hjust = 1, face = "bold"), 
+          legend.position = "none", 
+          plot.title = element_text(face="bold", size = 22), 
+          axis.text.y = element_text(face = "bold")) +
 	xlab("Year") + ylab(expression("Total Emissions  " * PM[25])) + 
 	labs(title = "Emissions by Source for Baltimore, MD")
 print(co.plot)
 
 ## Plot to the PNG device to create a file.
 print("Copying plot to the PNG file.")
-ggsave(filename="Project2-Plot3.png", dpi=72)
+ggsave(filename="plot3.png", dpi=72)
 
 ##  Record program end time
 end.time <- Sys.time()

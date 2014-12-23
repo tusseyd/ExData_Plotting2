@@ -2,9 +2,8 @@
 ## Exploratory Data Analysis
 ## Project 2, Plot 5 
 
-##  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
-##  Using the base plotting system, make a plot showing the total PM2.5 emission
-##  from all sources for each of the years 1999, 2002, 2005, and 2008
+##  How have emissions from motor vehicle sources 
+##  changed from 1999-2008 in Baltimore City?
 
 ##  Record program start time
 start.time <- Sys.time()
@@ -25,19 +24,26 @@ print( "Reading data file." )
 if (!exists("NEI")) NEI <- readRDS("./summarySCC_PM25.rds")
 if (!exists("SCC")) SCC <- readRDS("./Source_Classification_Code.rds")
 
-## Determine "coal combustion-related" sources
+##  Determine "motor vehicle" sources"
+##  To determine 'motor vehicle sources' the program
+##  uses the 'grepl' function to look for the phrase "motor" or "vehicle" (ignoring case) in
+##  five different fields of the SCC file.
+
 motor.SCC <- SCC$SCC[ grepl("motor | vehicle",   SCC$SCC.Level.Four,  ignore.case=TRUE) | 
                       grepl("motor | vehicle",   SCC$SCC.Level.Three, ignore.case=TRUE) |
                       grepl("motor | vehicle",   SCC$EI.Sector,       ignore.case=TRUE) |
                       grepl("motor | vehicle",   SCC$Short.Name,      ignore.case=TRUE) |
                       grepl("motor | vehicle",   SCC$SCC.Level.Two,   ignore.case=TRUE) ] 
 
-## Determine the total polution by year
+##  Determine the total polution by year
+##  Select data only for the Baltimore fips = 24510
 all.years <- unique(NEI$year)
 plot.data <- data.frame(Year = integer(), Emissions = numeric())
 
 total <- 0
 baltimore.data <- subset(NEI, fips == "24510")
+
+##  Build the 'plot.data' dataframe for eas in plotting.
 for (yr in all.years) {
     total <- sum(baltimore.data$Emissions[baltimore.data$SCC %in% motor.SCC & 
                         baltimore.data$year == yr])
@@ -58,7 +64,7 @@ with(plot.data, abline(model, lwd = 3, col = "gold2"))
 
 ## Plot to the PNG device to create a file.
 print("Copying plot to the PNG file.")
-dev.copy(png, file = "Project2-Plot5.png", width=480, height=480)
+dev.copy(png, file = "plot5.png", width=480, height=480)
 dev.off()
 
 ##  Record program end time

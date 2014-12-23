@@ -1,6 +1,6 @@
 ## David Tussey davidtussey@gmail.com
 ## Exploratory Data Analysis
-## Project 2, Plot 4 
+## Project 2, Plot 1 
 
 ##  Have total emissions from PM2.5 decreased in the United States from 1999 to 2008?
 ##  Using the base plotting system, make a plot showing the total PM2.5 emission
@@ -8,7 +8,7 @@
 
 ##  Record program start time
 start.time <- Sys.time()
-print(paste("Project 2 Plot#4 program Start time is: ", start.time))
+print(paste("Program Start time is: ", start.time))
 
 ## Get data file from provided URL if not available in working directory.
 setwd("./")
@@ -20,43 +20,38 @@ if(!file.exists("summarySCC_PM25.rds") | !file.exists("Source_Classification_Cod
 	unzip("SCCrawdata.zip")
 }
 
-
 # Read in the data. 
-print( "Reading data file." )
+print("Reading data file.")
 if (!exists("NEI")) NEI <- readRDS("./summarySCC_PM25.rds")
 if (!exists("SCC")) SCC <- readRDS("./Source_Classification_Code.rds")
 
-## Determine "coal combustion-related" sources
-coal.SCC <- SCC$SCC[  grepl("coal", SCC$SCC.Level.Four,  ignore.case=TRUE) | 
-                      grepl("coal", SCC$SCC.Level.Three, ignore.case=TRUE) |
-                      grepl("coal", SCC$EI.Sector,       ignore.case=TRUE) |
-                      grepl("coal", SCC$Short.Name,      ignore.case=TRUE) ] 
-
 ## Determine the total polution by year
+plot.data <- data.frame()
 all.years <- unique(NEI$year)
-plot.data <- data.frame(Year = integer(), Emissions = numeric())
+total <- 0
 
-totlaa <- 0
+##  Build the plot.data dataframe for ease in plotting.
 for (yr in all.years){
-    total <- sum(NEI$Emissions[NEI$SCC %in% coal.SCC & NEI$year == yr])
-    plot.data <- rbind(plot.data, data.frame(Year = yr, Emissions = total))
+	total <- sum(NEI$Emissions[NEI$year == yr])
+    plot.data <- rbind(plot.data, data.frame(yr, total))
 }
 
-##Plot 4
+##Plot 1
 ##  Plot to the screen for visual verification.
 print("Preparing plots for the screen device.")
-print("Building linear model.")
-model <- lm(Emissions ~ Year, plot.data)
 
-with(plot.data, plot(Year, Emissions,  col = "steelblue4", type = "b", lwd = 3,
-	ylim = c(0,800000), ylab = expression("Total Emissions  " * PM[25]),
-	xaxp = c(1998,2009,11), xlab = "Year", 
-    main = "Total Emissions by Year for Coal Combustion-Related Sources", cex.main = 0.8))
+names(plot.data) <- c("year", "Emissions")
+print("Building linear model.")
+model <- lm(Emissions ~ year, plot.data)
+
+with(plot.data, plot(year, Emissions,  col = "steelblue4", type = "b", lwd = 3,
+	ylim = c(0,10000000), ylab = expression("Total Emissions  " * PM[25]),
+	xaxp = c(1998,2009,11), xlab = "Year", main = "Total Emissions by Year"))
 with(plot.data, abline(model, lwd = 3, col = "gold2"))
 
 ## Plot to the PNG device to create a file.
 print("Copying plot to the PNG file.")
-dev.copy(png, file = "Project2-Plot4.png", width=480, height=480)
+dev.copy(png, file = "plot1.png", width=480, height=480)
 dev.off()
 
 ##  Record program end time
